@@ -5,7 +5,7 @@ CONNECTION_URI = "mongodb+srv://fayadchowdhury:733squashBC@squashbc.ss6kkda.mong
 
 # Dictionary for category and DivisionID to do API hits
 cat_div = {
-    "men_singles_19+": 2,
+    "men_singles_19+": 239,
     "men_singles_25+": 18,
     "men_singles_30+": 21,
     "men_singles_35+": 22,
@@ -78,11 +78,20 @@ def generate_overall_players_list(cat_div):
         players = get_player_rankings(v)
         for player in players:
             temp_player = player
+            rating_info = {
+                "category": category,
+                "rating": temp_player["Rating"],
+                "ranking": temp_player["Ranking"]
+            }
+            temp_player["Ratings"] = []
+            temp_player["Ratings"].append(rating_info)
+            del temp_player["Rating"]
+            del temp_player["Ranking"]
             temp_player["gender"] = gender
-            temp_player["category"] = category
             temp_player["age"] = age
             overall_players_list.append(temp_player)
-            
+    
+    print("Generated overall players list")        
     return overall_players_list
 
 def push_to_mongo_db(client, db, collection, data):
@@ -91,9 +100,40 @@ def push_to_mongo_db(client, db, collection, data):
     try:
         collection.insert_many(data)
         print("Successfully pushed data")
-        client.close()
     except(e):
-        print("Error pushing data to MongoDB: " + e)
+        print("Error pushing data to MongoDB: " + str(e))
+        
+def aggregate_players(client, db, in_collection, out_collection):
+    try: 
+        pipeline = [
+            {
+                "$unwind": "$Ratings"  # Unwind the Ratings array
+            },
+            {
+                "$group": {
+                    "_id": "$PlayerId",  # Group by PlayerId
+                    "fname": {"$first": "$Fname"},  # Preserve the first occurrence of Fname
+                    "lname": {"$first": "$Lname"},  # Preserve the first occurrence of Lname
+                    "gender": {"$first": "$gender"},  # Preserve the first occurrence of gender
+                    "age": {"$first": "$age"},  # Preserve the first occurrence of age
+                    "ratings": {
+                        "$push": {
+                            "category": "$Ratings.category",
+                            "rating": "$Ratings.rating",
+                            "ranking": "$Ratings.ranking",
+                        }
+                    }
+                }
+            },
+            {
+                "$out": out_collection
+            }
+        ]
+
+        result = client[db][in_collection].aggregate(pipeline)
+        print("Successfully performed aggregation on players")
+    except(e):
+        print("Error aggregating players: " + str(e))
 
 if __name__=="__main__":
     client = MongoClient(CONNECTION_URI)
@@ -105,7 +145,11 @@ if __name__=="__main__":
     except Exception as e:
         print("Error: " + e)
         
-    overall_players_list = generate_overall_players_list(cat_div=cat_div)
+    # overall_players_list = generate_overall_players_list(cat_div=cat_div)
     
-    push_to_mongo_db(client, "squashbc", "players", overall_players_list)
+    # push_to_mongo_db(client, "squashbc", "players_raw", overall_players_list)
+    
+    aggregate_players(client, "squashbc", "players_raw", "players_aggregated")
+    
+    client.close()
 
