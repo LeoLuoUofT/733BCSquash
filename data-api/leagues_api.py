@@ -1,5 +1,6 @@
 import requests
 from pymongo.mongo_client import MongoClient
+from datetime import datetime
 
 CONNECTION_URI = "mongodb+srv://fayadchowdhury:733squashBC@squashbc.ss6kkda.mongodb.net/?retryWrites=true&w=majority&appName=squashbc"
 
@@ -156,6 +157,19 @@ match_ids = [
     '156463',
 ]
 
+def convert_date_string(date_str):
+    try:
+        # Parse the date string to a datetime object
+        date_obj = datetime.strptime(date_str, '%m/%d/%Y')
+        
+        # Format the datetime object as the desired timestamp format
+        timestamp_str = date_obj.strftime('%Y-%m-%dT00:00:00')
+        
+        return timestamp_str
+    except ValueError:
+        # If the input string does not match the specified format, return it as is
+        return date_str
+
 def get_match_info(match_id):
     url = "https://api.ussquash.com/resources/leagues/scorecards/live?id="
     url = url + str(match_id)
@@ -167,18 +181,32 @@ def get_match_info(match_id):
         print("Error: ", response.status_code)
         return None
 
-def generate_overall_league_matches_list(match_ids):
+def get_player_id_from_name(client, db, collection, name):
+    # Corner case for Kelly Ann Zander -_-
+    if name == "Kelly Ann Zander":
+        first_name = "Kelly Ann"
+        last_name = "Zander"
+    else:
+        first_name, last_name = name.split(" ", 1)
+    result = client[db][collection].find_one({"fname": first_name.strip(), "lname": last_name.strip()})
+    if result == None:
+        print("No ID found for {name}".format(name=name))
+        return None
+    return result['_id']
+
+def generate_overall_league_matches_list(client, db, player_collection, match_ids):
     overall_league_matches = []
     for match in match_ids:
         data = get_match_info(match)[0]
         temp = {
+            "event_name": "Random League", # Possibly acquire this name
             "type": "League",
-            "date": data["matchDate"],
+            "date": convert_date_string(data["matchDate"]),
             "scores": data["score"],
-            "player_a1": data["playerHome1Name"],
-            "player_a2": data["playerHome2Name"],
-            "player_b1": data["playerVisiting1Name"],
-            "player_b2": data["playerVisiting2Name"],
+            "player_a1": get_player_id_from_name(client, db, player_collection, data["playerHome1Name"]) if data["playerHome1Name"] != "Default" else 0,
+            "player_a2": get_player_id_from_name(client, db, player_collection, data["playerHome2Name"]) if data["playerHome2Name"] != "Default" else 0,
+            "player_b1": get_player_id_from_name(client, db, player_collection, data["playerVisiting1Name"]) if data["playerVisiting1Name"] != "Default" else 0,
+            "player_b2": get_player_id_from_name(client, db, player_collection, data["playerVisiting2Name"]) if data["playerVisiting2Name"] != "Default" else 0,
         }
         overall_league_matches.append(temp)
         
@@ -193,7 +221,7 @@ def push_to_mongo_db(client, db, collection, data):
         print("Successfully pushed data")
     except Exception as e:
         print("Error pushing data to MongoDB: " + str(e))
-        
+
 if __name__=="__main__":
     client = MongoClient(CONNECTION_URI)
 
@@ -202,9 +230,10 @@ if __name__=="__main__":
         client.admin.command('ping')
         print("Pinged your deployment. You successfully connected to MongoDB!")
     except Exception as e:
-        print("Error: " + e)
-        
-    overall_league_matches = generate_overall_league_matches_list(match_ids=match_ids)
+        print("Error: " + str(e))
+    
+    # Run once    
+    overall_league_matches = generate_overall_league_matches_list(client, "squashbc", "players_aggregated", match_ids=match_ids)
     push_to_mongo_db(client, "squashbc", "matches", overall_league_matches)
     
     client.close()
