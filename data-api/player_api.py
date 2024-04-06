@@ -100,7 +100,7 @@ def push_to_mongo_db(client, db, collection, data):
     try:
         collection.insert_many(data)
         print("Successfully pushed data")
-    except(e):
+    except Exception as e:
         print("Error pushing data to MongoDB: " + str(e))
         
 def aggregate_players(client, db, in_collection, out_collection):
@@ -132,7 +132,7 @@ def aggregate_players(client, db, in_collection, out_collection):
 
         result = client[db][in_collection].aggregate(pipeline)
         print("Successfully performed aggregation on players")
-    except(e):
+    except Exception as e:
         print("Error aggregating players: " + str(e))
 
 if __name__=="__main__":
