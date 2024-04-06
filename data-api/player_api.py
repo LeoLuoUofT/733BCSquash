@@ -89,6 +89,8 @@ def generate_overall_players_list(cat_div):
             del temp_player["Ranking"]
             temp_player["gender"] = gender
             temp_player["age"] = age
+            temp_player["Fname"] = temp_player["Fname"].strip()
+            temp_player["Lname"] = temp_player["Lname"].strip()
             overall_players_list.append(temp_player)
     
     print("Generated overall players list")        
@@ -143,11 +145,12 @@ if __name__=="__main__":
         client.admin.command('ping')
         print("Pinged your deployment. You successfully connected to MongoDB!")
     except Exception as e:
-        print("Error: " + e)
-        
-    # overall_players_list = generate_overall_players_list(cat_div=cat_div)
+        print("Error: " + str(e))
     
-    # push_to_mongo_db(client, "squashbc", "players_raw", overall_players_list)
+    # Run once    
+    overall_players_list = generate_overall_players_list(cat_div=cat_div)
+    
+    push_to_mongo_db(client, "squashbc", "players_raw", overall_players_list)
     
     aggregate_players(client, "squashbc", "players_raw", "players_aggregated")
     
