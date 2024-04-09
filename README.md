@@ -1,2 +1,3 @@
 # 733BCSquash
-In-progress
+
+Branch names correspond to work done by individual teammates
