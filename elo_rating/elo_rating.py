@@ -92,67 +92,6 @@ def elo_sys_with_scorefactor_and_dynamic_k(df, elo_ratings):
                 # Draw
                 pass
     return elo_ratings
-    # Initialize parameters for the Elo system
-    starting_elo = 1200  # Starting Elo rating for new players
-    
-    # Function to calculate K-factor based on Elo rating
-    def calculate_k_factor(elo_rating):
-        if elo_rating < 2000:
-            return 30
-        elif elo_rating < 2400:
-            return 20
-        else:
-            return 10
-        
-    # Iterate through each row (match) in the DataFrame
-    for index, row in df.iterrows():
-        # Extract match details
-        game_score = row["Game Scores"]
-        for score in game_score:
-            score_a = score[0]
-            score_b = score[1]
-
-            # Extract player names
-            player_a1 = row["Player A1"]
-            player_a2 = row["Player A2"]
-            player_b1 = row["Player B1"]
-            player_b2 = row["Player B2"]
-
-            # Initialize Elo ratings for new players
-            for player in [player_a1, player_a2, player_b1, player_b2]:
-                if player not in elo_ratings:
-                    elo_ratings[player] = starting_elo
-
-            # Calculate expected win probability for each team
-            team_a_elo = (elo_ratings[player_a1] + elo_ratings[player_a2]) / 2
-            team_b_elo = (elo_ratings[player_b1] + elo_ratings[player_b2]) / 2
-            expected_win_a = expected_win_probability(team_a_elo, team_b_elo)
-            expected_win_b = 1 - expected_win_a
-
-            # Update Elo ratings based on actual outcome
-            k_factor_a = calculate_k_factor(team_a_elo)
-            k_factor_b = calculate_k_factor(team_b_elo)
-
-            # Determine the score difference factor
-            score_difference = abs(score_a - score_b)
-            score_factor = 1 + (score_difference / 3)  # Adjust this factor as needed
-
-            if score_a > score_b:
-                # Team A won
-                elo_ratings[player_a1] += k_factor_a * score_factor * (1 - expected_win_a)
-                elo_ratings[player_a2] += k_factor_a * score_factor * (1 - expected_win_a)
-                elo_ratings[player_b1] += k_factor_b * score_factor * (0 - expected_win_b)
-                elo_ratings[player_b2] += k_factor_b * score_factor * (0 - expected_win_b)
-            elif score_a < score_b:
-                # Team B won
-                elo_ratings[player_a1] += k_factor_a * score_factor * (0 - expected_win_a)
-                elo_ratings[player_a2] += k_factor_a * score_factor * (0 - expected_win_a)
-                elo_ratings[player_b1] += k_factor_b * score_factor * (1 - expected_win_b)
-                elo_ratings[player_b2] += k_factor_b * score_factor * (1 - expected_win_b)
-            else:
-                # Draw
-                pass
-    return elo_ratings
 
 def elo_sys_baseline(df, elo_ratings):
     # Initialize parameters for the Elo system
@@ -457,10 +396,12 @@ def run(input_file_path):
     for player, elo in sorted_elo_ratings_event[:5]:
         print(f"Player: {player}, Elo: {elo}")
         
-    return sorted_elo_ratings, sorted_elo_ratings_base, sorted_elo_ratings_norm, sorted_elo_ratings_event
+    return df, sorted_elo_ratings, sorted_elo_ratings_base, sorted_elo_ratings_norm, sorted_elo_ratings_event
         
 if __name__=="__main__":
-    sorted_elo, sorted_elo_base, sorted_elo_norm, sorted_elo_event = run("data/data_output/combined.csv")
+    df, sorted_elo, sorted_elo_base, sorted_elo_norm, sorted_elo_event = run("data/data_output/combined.csv")
+    
+    df.to_csv("elo_rating/final_elo_rating_df.csv")
     
     pd.DataFrame(sorted_elo).to_csv("elo_rating/sorted_elo.csv")
     pd.DataFrame(sorted_elo_base).to_csv("elo_rating/sorted_elo_base.csv")
