@@ -222,7 +222,7 @@ def push_to_mongo_db(client, db, collection, data):
     except Exception as e:
         print("Error pushing data to MongoDB: " + str(e))
 
-if __name__=="__main__":
+def run():
     client = MongoClient(CONNECTION_URI)
 
     # This works. Nice!

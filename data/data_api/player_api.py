@@ -137,7 +137,7 @@ def aggregate_players(client, db, in_collection, out_collection):
     except Exception as e:
         print("Error aggregating players: " + str(e))
 
-if __name__=="__main__":
+def run():
     client = MongoClient(CONNECTION_URI)
 
     # This works. Nice!
