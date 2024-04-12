@@ -11,28 +11,6 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 
 
-# def preprocess(input_file_path):
-#     df = pd.read_csv(input_file_path)
-#     # Remove entries where the "Game Scores" column is NaN
-#     df = df.dropna(subset=["Game Scores"])
-#     df["Match Date"] = pd.to_datetime(df["Match Date"])
-#     df = df.sort_values(by="Match Date")
-#     df = df[
-#         [
-#             "Match Date",
-#             "Event Name",
-#             "Game Scores",
-#             "Player A1",
-#             "Player A2",
-#             "Player B1",
-#             "Player B2",
-#         ]
-#     ]
-#     df["Game Scores"] = df["Game Scores"].apply(ast.literal_eval)
-    
-#     return df
-
-
 def generate_match_outcomes(df):
     # Initialize list to store match outcomes
     match_outcomes = []
@@ -68,7 +46,7 @@ def generate_match_outcomes(df):
 
     return df
 
-if __name__=="__main__":
+def run():
     df = pd.read_csv("elo_rating/final_elo_rating_df.csv")
     df["Game Scores"] = df["Game Scores"].apply(ast.literal_eval)
     data_with_match_outcomes = generate_match_outcomes(df)
