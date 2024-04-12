@@ -190,7 +190,7 @@ def get_player_id_from_name(client, db, collection, name):
         first_name, last_name = name.split(" ", 1)
     result = client[db][collection].find_one({"fname": first_name.strip(), "lname": last_name.strip()})
     if result == None:
-        print("No ID found for {name}".format(name=name))
+        # print("No ID found for {name}".format(name=name))
         return None
     return result['_id']
 
@@ -228,7 +228,7 @@ def run():
     # This works. Nice!
     try:
         client.admin.command('ping')
-        print("Pinged your deployment. You successfully connected to MongoDB!")
+        # print("Pinged your deployment. You successfully connected to MongoDB!")
     except Exception as e:
         print("Error: " + str(e))
     

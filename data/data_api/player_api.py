@@ -143,7 +143,7 @@ def run():
     # This works. Nice!
     try:
         client.admin.command('ping')
-        print("Pinged your deployment. You successfully connected to MongoDB!")
+        # print("Pinged your deployment. You successfully connected to MongoDB!")
     except Exception as e:
         print("Error: " + str(e))
     
