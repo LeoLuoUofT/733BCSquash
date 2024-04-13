@@ -6,6 +6,7 @@ warnings.filterwarnings("ignore")
 from data import data_script
 from elo_rating import elo_rating
 from outcome_classifier import model
+from eloApp import app
 
 if __name__=="__main__":
     # TODO: Write and run cleanup script if possible
@@ -14,3 +15,5 @@ if __name__=="__main__":
     elo_rating.run("data/data_output/combined.csv")
     # Next run model code
     model.run()
+    # Run frontend
+    app.run()

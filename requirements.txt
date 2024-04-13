@@ -2,3 +2,6 @@ pandas
 Flask
 scikit-learn
 tabulate
+pymongo
+requests
+scikit-learn
