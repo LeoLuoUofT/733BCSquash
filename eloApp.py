@@ -1,8 +1,6 @@
 import pandas as pd
 import re
-from flask import Flask, request, render_template, g, redirect, url_for
-import os
-from werkzeug.utils import secure_filename
+from flask import Flask, request, render_template, redirect, url_for
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, precision_score, recall_score
