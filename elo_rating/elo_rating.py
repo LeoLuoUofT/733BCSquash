@@ -396,14 +396,9 @@ def run(input_file_path):
     for player, elo in sorted_elo_ratings_event[:5]:
         print(f"Player: {player}, Elo: {elo}")
         
-    return df, sorted_elo_ratings, sorted_elo_ratings_base, sorted_elo_ratings_norm, sorted_elo_ratings_event
-        
-if __name__=="__main__":
-    df, sorted_elo, sorted_elo_base, sorted_elo_norm, sorted_elo_event = run("data/data_output/combined.csv")
-    
     df.to_csv("elo_rating/final_elo_rating_df.csv")
     
-    pd.DataFrame(sorted_elo).to_csv("elo_rating/sorted_elo.csv")
-    pd.DataFrame(sorted_elo_base).to_csv("elo_rating/sorted_elo_base.csv")
-    pd.DataFrame(sorted_elo_norm).to_csv("elo_rating/sorted_elo_norm.csv")
-    pd.DataFrame(sorted_elo_event).to_csv("elo_rating/sorted_elo_event.csv")
+    pd.DataFrame(sorted_elo_ratings).to_csv("elo_rating/sorted_elo.csv")
+    pd.DataFrame(sorted_elo_ratings_base).to_csv("elo_rating/sorted_elo_base.csv")
+    pd.DataFrame(sorted_elo_ratings_norm).to_csv("elo_rating/sorted_elo_norm.csv")
+    pd.DataFrame(sorted_elo_ratings_event).to_csv("elo_rating/sorted_elo_event.csv")
