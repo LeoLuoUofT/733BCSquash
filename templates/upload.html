@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload File</title>
+    <style>
+        .loader {
+            border: 16px solid #f3f3f3; /* Light grey */
+            border-top: 16px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+            display: none; /* Initially hidden */
+            margin-top: 50px; /* Added margin to position loader further down */
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loader-message {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Upload File</h1>
+    <form method="post" action="/" enctype="multipart/form-data" onsubmit="showLoader()">
+        <input type="file" name="file" id="file">
+        <button type="submit">Upload</button>
+    </form>
+    <div class="loader" id="loader"></div>
+    <p class="loader-message">This may take a while, please be patient</p>
+    <script>
+        function showLoader() {
+            document.getElementById("loader").style.display = "block";
+        }
+    </script>
+</body>
+</html>

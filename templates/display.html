@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Display Players</title>
+</head>
+<body>
+    <h1>Top Players</h1>
+    <form method="post" action="/display">
+        <label for="top_players_count">Number of Top Players:</label>
+        <input type="number" id="top_players_count" name="top_players_count" min="1" value="{{ top_players_count }}">
+        <button type="submit">Update</button>
+    </form>
+
+    <!-- Search form -->
+    <form method="post" action="/display">
+        <label for="search_name">Search by Player Name:</label>
+        <input type="text" id="search_name" name="search_name" value="{{ search_name }}">
+        <button type="submit">Search</button>
+    </form>
+
+        <!-- Button to go to predict page -->
+    <form action="/predict">
+        <button type="submit">Go to Predictor</button>
+    </form>
+
+    <table border="1">
+        <tr>
+            <th>Rank</th>
+            <th>Player</th>
+            <th>Elo</th>
+            <th>Wins</th>
+            <th>Losses</th>
+            <th>Championship Wins</th>
+            <th>Championship Losses</th>
+        </tr>
+        {% for player, elo, wins, losses, champ_wins, champ_losses,rank in table_data %}
+        <tr>
+            <td>{{ rank }}</td>
+            <td>{{ player }}</td>
+            <td>{{ elo }}</td>
+            <td>{{ wins }}</td>
+            <td>{{ losses }}</td>
+            <td>{{ champ_wins }}</td>
+            <td>{{ champ_losses }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

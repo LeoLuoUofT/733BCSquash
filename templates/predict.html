@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML Match Predictor</title>
+</head>
+<body>
+    <h1>ML Match Predictor</h1>
+    <form method="post" action="/predict">
+        <label for="create_predictor">Create ML Predictor:</label>
+        <button type="submit" name="action" value="create_predictor">Create Predictor</button>
+    </form>
+
+        <!-- Display accuracy, precision, and recall values -->
+    {% if accuracy is defined %}
+    <div>
+        <h3>Model Evaluation Metrics</h3>
+        <p>Accuracy: {{ accuracy }}</p>
+        <p>Precision: {{ precision }}</p>
+        <p>Recall: {{ recall }}</p>
+    </div>
+    {% endif %}
+    
+    <h2>Predict Match Outcome</h2>
+    <form method="post" action="/predict">
+        <label for="player_A1">Player A1 Name:</label>
+        <input type="text" id="player_A1" name="player_A1" {% if player_A1 %}value="{{ player_A1 }}" {% endif %}><br>
+        <label for="player_A2">Player A2 Name:</label>
+        <input type="text" id="player_A2" name="player_A2" {% if player_A2 %}value="{{ player_A2 }}" {% endif %}><br>
+        <label for="player_B1">Player B1 Name:</label>
+        <input type="text" id="player_B1" name="player_B1" {% if player_B1 %}value="{{ player_B1 }}" {% endif %}><br>
+        <label for="player_B2">Player B2 Name:</label>
+        <input type="text" id="player_B2" name="player_B2" {% if player_B2 %}value="{{ player_B2 }}" {% endif %}><br>
+        <button type="submit" name="action" value="predict_match">Predict Match Outcome</button>
+    </form>
+
+    <!-- Display predicted match outcome and winning percentage -->
+    {% if match_outcome is defined %}
+    <div>
+        <h3>Predicted Match Outcome</h3>
+        <p>Outcome: {{ match_outcome }}</p>
+        <p>Winning Percentage: {{ winning_percentage | round(2)}}%</p>
+    </div>
+    {% endif %}
+
+        <!-- Display error message if it exists -->
+    {% if error_message %}
+    <div>
+        <h3>Error</h3>
+        <p>{{ error_message }}</p>
+    </div>
+    {% endif %}
+    
+    <form action="/display">
+        <button type="submit">Go back to Display</button>
+    </form>
+</body>
+</html>
