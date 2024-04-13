@@ -404,7 +404,9 @@ def predict():
                         app.players_df, (player_A1, player_A2, player_B1, player_B2)
                     )
                     match_outcome = app.model.predict(temp_df)[0]
-                    if match_outcome == 1:
+                    print(app.model.predict(temp_df))
+                    print(app.model.predict_proba(temp_df))
+                    if match_outcome == 0:
                         match_percentage = app.model.predict_proba(temp_df)[0][0] * 100
                         match_outcome = f"Team A, consisting of {player_A1} and {player_A2}, Win"
                     else:

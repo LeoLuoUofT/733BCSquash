@@ -16,9 +16,9 @@
     {% if accuracy is defined %}
     <div>
         <h3>Model Evaluation Metrics</h3>
-        <p>Accuracy: {{ accuracy }}</p>
-        <p>Precision: {{ precision }}</p>
-        <p>Recall: {{ recall }}</p>
+        <p>Accuracy: {{ accuracy | round(2) }}</p>
+        <p>Precision: {{ precision| round(2)  }}</p>
+        <p>Recall: {{ recall| round(2)  }}</p>
     </div>
     {% endif %}
     
